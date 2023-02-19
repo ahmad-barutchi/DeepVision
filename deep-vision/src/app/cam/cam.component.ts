@@ -1,78 +1,80 @@
-import {   Component,
-  NgModule,
-  VERSION,
-  ViewChild,
-  ViewChildren,
-  QueryList,
-  ElementRef,
-  AfterViewInit
-} from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { CamService } from './cam.service';
 
 @Component({
-  selector: 'app-cam',
+  selector: 'app-webcam',
   template: `
-  <pre *ngIf="error">
-            {{error | json}}
-          </pre>
-  <div class="vid">
-    <video #video width="350" height="400"></video>
-  </div>
+    <video #video autoplay></video>
+    <canvas #canvas></canvas>
+    <button name="file"  type="submit" (click)="startCapture()">Start</button>
+    <button (click)="stopCapture()">Stop</button>
   `,
-  styleUrls: ['./cam.component.scss']
+  styles: [`
+    video {
+      width: 360px;
+    }
+    canvas {
+      display: none;
+    }
+  `]
 })
-export class CamComponent implements AfterViewInit {
-  title = "live-video-demo";
-  @ViewChild("video")
-  video: ElementRef<HTMLVideoElement>
-  ngVersion: string;
-  streaming = false;
-  error: any;
-  private stream: any = null;
-  private constraints = {
-    audio: false,
-    video: true,
-  };
+export class CamComponent {
+  @ViewChild('video', { static: true }) video: any;
 
-  constructor() {
-    this.video = new ElementRef(document.createElement('video'));
-    this.ngVersion = `Angular! v${VERSION.full}`;
+  @ViewChild('canvas')
+  canvas: any;
+
+  private stream: any;
+  private requestId: any;
+  private sending: boolean = false;
+
+  constructor(private webcamService: CamService) {
+
   }
 
   ngAfterViewInit() {
-    this.initVideo();
-  }
-
-  initVideo() {
-    this.getMediaStream()
-      .then((stream) => {
+    const videoEl = this.video.nativeElement;
+    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+      .then((stream: MediaStream) => {
         this.stream = stream;
-        this.streaming = true;
+        videoEl.srcObject = stream;
       })
       .catch((err) => {
-        this.streaming = false;
-        this.error = err.message + " (" + err.name + ":" + err.constraintName + ")";
+        console.error(err);
       });
   }
-  private getMediaStream(): Promise<MediaStream> {
 
-    const video_constraints = { video: true };
-    const _video = this.video.nativeElement;
-    return new Promise<MediaStream>((resolve, reject) => {
-      // (get the stream)
-      return navigator.mediaDevices.
-      getUserMedia(video_constraints)
-        .then(stream => {
-          (<any>window).stream = stream; // make variable available to browser console
-          _video.srcObject = stream;
-          // _video.src = window.URL.createObjectURL(stream);
-          _video.onloadedmetadata = function (e: any) { };
-          _video.play();
-          return resolve(stream);
-        })
-        .catch(err => reject(err));
+  startCapture() {
+    console.log("startCapture")
+    const canvasEl = this.canvas.nativeElement;
+    const videoEl = this.video.nativeElement;
+    const context = canvasEl.getContext('2d');
+
+    canvasEl.width = videoEl.videoWidth;
+    canvasEl.height = videoEl.videoHeight;
+
+    this.requestId = requestAnimationFrame(() => this.captureFrame(canvasEl, context));
+  }
+
+  stopCapture() {
+    cancelAnimationFrame(this.requestId);
+    this.stream.getTracks().forEach((track: { stop: () => void; }) => {
+      track.stop();
     });
   }
 
+  captureFrame(canvasEl: HTMLCanvasElement, context: CanvasRenderingContext2D) {
+    context.drawImage(this.video.nativeElement, 0, 0, canvasEl.width, canvasEl.height);
 
+    const imageData = canvasEl.toDataURL('image/jpeg', 0.5);
 
+    if (!this.sending) {
+      this.sending = true;
+      this.webcamService.sendImage(imageData).subscribe(() => {
+        this.sending = false;
+      });
+    }
+
+    this.requestId = requestAnimationFrame(() => this.captureFrame(canvasEl, context));
+  }
 }

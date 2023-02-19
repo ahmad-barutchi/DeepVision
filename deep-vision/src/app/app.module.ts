@@ -6,6 +6,8 @@ import { AppComponent } from './app.component';
 import { CamComponent } from './cam/cam.component';
 import { HomeComponent } from './home/home.component';
 import { OptionComponent } from './option/option.component';
+import {HttpClientModule} from "@angular/common/http";
+import {CamService} from "./cam/cam.service";
 
 @NgModule({
   declarations: [
@@ -16,9 +18,10 @@ import { OptionComponent } from './option/option.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule
   ],
-  providers: [],
+  providers: [CamService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
