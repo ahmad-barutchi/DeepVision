@@ -6,7 +6,7 @@ This project is issue of CSLab Hackathon "Le Handicap" 2023 in Belgium
 
 - Benita Tia
 - D4rkL4s3r
-- Louis Gobert
+- Simon Halliez
 - Elisa De Coster
 - Kenzo Konan
 - Ahmad Barutchi
