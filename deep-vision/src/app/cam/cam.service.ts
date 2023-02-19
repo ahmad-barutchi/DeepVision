@@ -14,5 +14,5 @@ export class CamService {
     const body = {
       image: imageData
     };
-    return this.http.post('http://localhost:5000/video_feed', body);
+    return this.http.post('https://548a-138-48-2-20.eu.ngrok.io/video_feed', body);
   }}

@@ -6,15 +6,25 @@ import { CamService } from './cam.service';
   template: `
     <video #video autoplay></video>
     <canvas #canvas></canvas>
-    <button name="file"  type="submit" (click)="startCapture()">Start</button>
-    <button (click)="stopCapture()">Stop</button>
+    <button class="start" name="file" type="submit" (click)="startCapture()">Start</button>
+    <button class="stop" (click)="stopCapture()">Stop</button>
   `,
   styles: [`
     video {
-      width: 360px;
+      width: 340px;
     }
     canvas {
       display: none;
+    }
+    .start{
+      margin-right: 20px;
+      background-color: lightgreen;
+      font-size: 2em;
+    }
+    .stop{
+      margin: auto;
+      background-color: deeppink;
+      font-size: 2em;
     }
   `]
 })
@@ -66,7 +76,7 @@ export class CamComponent {
   captureFrame(canvasEl: HTMLCanvasElement, context: CanvasRenderingContext2D) {
     context.drawImage(this.video.nativeElement, 0, 0, canvasEl.width, canvasEl.height);
 
-    const imageData = canvasEl.toDataURL('image/jpeg', 0.5);
+    const imageData = canvasEl.toDataURL('image/jpeg', 0.9);
 
     if (!this.sending) {
       this.sending = true;

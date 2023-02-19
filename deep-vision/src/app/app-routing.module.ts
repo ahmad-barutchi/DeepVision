@@ -8,7 +8,8 @@ const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'options', component: OptionComponent },
   {path: 'cam', component: CamComponent},
-  { path: '**', redirectTo: '/home' },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: '**', redirectTo: 'home' },
 ];
 
 @NgModule({
