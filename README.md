@@ -1,6 +1,6 @@
 # DeepVision
 
-This project is issue of CSLab Hackathon "Le Handicap" 2023 in Belgium
+This project is issue of CSLabs Hackathon "Le Handicap" 17-19 mars 2023 at UNamur University in Belgium
 
 **Thanks for all contributors:**
 
