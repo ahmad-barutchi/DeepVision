@@ -41,7 +41,7 @@ def video_feed():
     img = Image.open(BytesIO(image_data))
 
     # Save the image as a JPEG file in the images directory
-    img_path = os.path.join('images', 'myimage.png')
+    img_path = os.path.join('images', 'myimage1.png')
     img.save(img_path)
     return Response(get_video_feed(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
